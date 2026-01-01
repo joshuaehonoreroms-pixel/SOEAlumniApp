@@ -1,0 +1,187 @@
+"use client"
+
+import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { ArrowLeft, CheckCircle2, Loader2, User, GraduationCap, Building } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
+
+export default function RegisterPage() {
+  const router = useRouter()
+  const [step, setStep] = React.useState(1)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [role, setRole] = React.useState<"student" | "alumni" | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    console.log("[v0] Submitting registration for role:", role)
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    setIsLoading(false)
+    router.push("/dashboard")
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
+      {/* Left Side - Visual & Context */}
+      <div className="hidden lg:flex flex-1 bg-muted relative overflow-hidden items-center justify-center p-12 xl:p-24">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/code-background-register.jpg"
+            alt="Code Pattern"
+            className="w-full h-full object-cover opacity-10 dark:opacity-30 grayscale"
+          />
+          <div className="absolute inset-0 bg-gradient-to-tl from-primary/20 via-background/50 to-background" />
+        </div>
+        <div className="relative z-10 text-left max-w-lg">
+          <div className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            NETWORK IS LIVE
+          </div>
+          <h2 className="text-4xl xl:text-5xl font-bold mb-8 leading-tight">Start your journey in the collective.</h2>
+          <div className="space-y-6">
+            {[
+              { text: "Connect with 5,000+ software engineers", icon: User },
+              { text: "Access exclusive internship opportunities", icon: Building },
+              { text: "Get mentored by industry-leading alumni", icon: GraduationCap },
+              { text: "Showcase your projects to the community", icon: CheckCircle2 },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-4 items-center group">
+                <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                  <item.icon className="w-5 h-5 text-primary" />
+                </div>
+                <p className="text-lg text-muted-foreground">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Form */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 md:px-24 lg:px-32 relative">
+        <Link
+          href="/"
+          className="absolute top-12 left-8 md:left-24 text-sm font-mono text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> .back
+        </Link>
+
+        <div className="max-w-md w-full mx-auto">
+          <div className="mb-8">
+            <div className="flex gap-2 mb-4">
+              {[1, 2].map((s) => (
+                <div
+                  key={s}
+                  className={`h-1 flex-1 rounded-full transition-colors ${step >= s ? "bg-primary" : "bg-muted"}`}
+                />
+              ))}
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight">Join the Network.</h1>
+            <p className="text-muted-foreground">
+              {step === 1 ? "Tell us who you are." : "Complete your professional account."}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {step === 1 ? (
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-1 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setRole("student")}
+                    className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+                      role === "student" ? "border-primary bg-primary/5" : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                      <GraduationCap className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-bold">I am a Student</div>
+                      <div className="text-sm text-muted-foreground">Currently studying at the university.</div>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole("alumni")}
+                    className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+                      role === "alumni" ? "border-primary bg-primary/5" : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                      <Building className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="font-bold">I am an Alumni</div>
+                      <div className="text-sm text-muted-foreground">Working professional and graduate.</div>
+                    </div>
+                  </button>
+                </div>
+                <Button type="button" disabled={!role} onClick={() => setStep(2)} className="w-full h-12 font-mono">
+                  .continue
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first-name">First name</Label>
+                    <Input id="first-name" placeholder="Jane" required className="h-12" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last-name">Last name</Label>
+                    <Input id="last-name" placeholder="Doe" required className="h-12" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">University Email</Label>
+                  <Input id="email" type="email" placeholder="name@university.edu" required className="h-12" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" placeholder="••••••••" required className="h-12" />
+                </div>
+                <div className="flex items-center space-x-2 py-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    required
+                    className="w-4 h-4 rounded border-border bg-card text-primary focus:ring-primary"
+                  />
+                  <label htmlFor="terms" className="text-xs text-muted-foreground">
+                    I agree to the Terms of Service.
+                  </label>
+                </div>
+                <div className="flex gap-4">
+                  <Button type="button" variant="outline" onClick={() => setStep(1)} className="h-12 px-6">
+                    Back
+                  </Button>
+                  <Button type="submit" disabled={isLoading} className="flex-1 h-12 font-mono">
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : ".create account"}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </form>
+
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Already a member?{" "}
+            <Link href="/login" className="text-primary font-bold hover:underline transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
